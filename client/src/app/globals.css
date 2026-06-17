@@ -158,3 +158,36 @@
     @apply font-sans;
   }
 }
+
+/* ── Range slider thumb — dual-handle salary slider ──────────────── */
+.range-slider-thumb::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 2px solid var(--card);
+  box-shadow: 0 0 0 1px var(--primary);
+  cursor: pointer;
+  transition: box-shadow 150ms ease;
+}
+
+.range-slider-thumb::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 2px solid var(--card);
+  box-shadow: 0 0 0 1px var(--primary);
+  cursor: pointer;
+  transition: box-shadow 150ms ease;
+}
+
+.range-slider-thumb:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 40%, transparent);
+}
+
+.range-slider-thumb:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 40%, transparent);
+}
