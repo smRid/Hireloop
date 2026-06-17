@@ -1,5 +1,13 @@
+import HeroSection from "@/components/public/HeroSection";
+import StatsRow from "@/components/public/StatsRow";
+
 const HomePage = () => {
-  return <div></div>;
+  return (
+    <>
+      <HeroSection />
+      <StatsRow />
+    </>
+  );
 };
 
 export default HomePage;

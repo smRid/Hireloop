@@ -22,8 +22,12 @@ function BrandMark() {
       fill="none"
       aria-hidden="true"
       className="shrink-0"
+      style={{
+        "--mark-top": "var(--primary)",
+        "--mark-bottom": "var(--ring)",
+      }}
     >
-      {/* Square rotated 45° — top half lighter teal */}
+      {/* Square rotated 45° — top half: brand teal (--primary) */}
       <rect
         x="3"
         y="3"
@@ -31,10 +35,10 @@ function BrandMark() {
         height="14"
         rx="1"
         transform="rotate(45 10 10)"
-        fill="oklch(0.72 0.13 178)"
+        fill="var(--mark-top)"
       />
-      {/* Bottom-half darker teal triangle (diagonal split) */}
-      <clipPath id="bottom-half">
+      {/* Bottom-half darker teal — diagonal split via clipPath */}
+      <clipPath id="brand-mark-bottom">
         <rect x="0" y="10" width="20" height="10" />
       </clipPath>
       <rect
@@ -44,8 +48,9 @@ function BrandMark() {
         height="14"
         rx="1"
         transform="rotate(45 10 10)"
-        fill="oklch(0.55 0.14 178)"
-        clipPath="url(#bottom-half)"
+        fill="var(--mark-bottom)"
+        style={{ opacity: 0.65 }}
+        clipPath="url(#brand-mark-bottom)"
       />
     </svg>
   );
@@ -59,10 +64,10 @@ function NavLink({ href, children, onClick }) {
       onClick={onClick}
       className={cn(
         "relative inline-block text-[14px] text-muted-foreground transition-colors duration-200 hover:text-foreground",
-        "after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full",
+        "after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full",
         "after:origin-left after:scale-x-0 after:rounded-full",
         "after:bg-primary after:transition-transform after:duration-300",
-        "hover:after:scale-x-100"
+        "hover:after:scale-x-100",
       )}
     >
       {children}
@@ -80,7 +85,7 @@ export default function Navbar() {
         className={cn(
           "sticky top-0 z-50 w-full h-16",
           "bg-card border-b border-border",
-          "backdrop-blur-md"
+          "backdrop-blur-md",
         )}
       >
         <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -152,7 +157,7 @@ export default function Navbar() {
         className={cn(
           "sticky top-16 z-40 w-full overflow-hidden border-b border-border bg-card backdrop-blur-md md:hidden",
           "transition-all duration-300 ease-in-out",
-          mobileOpen ? "max-h-72 opacity-100" : "max-h-0 opacity-0"
+          mobileOpen ? "max-h-72 opacity-100" : "max-h-0 opacity-0",
         )}
       >
         <div className="flex flex-col gap-1 px-4 py-4">
