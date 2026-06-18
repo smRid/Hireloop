@@ -1,4 +1,4 @@
-import SettingsPage from "@/components/dashboard/SettingsPage";
+import SettingsPage from "@/components/dashboardPage/SettingsPage";
 
 export default function SeekerSettingsPage() {
   return <SettingsPage role="seeker" />;

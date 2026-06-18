@@ -3,8 +3,8 @@
 import { createContext, useContext, useState } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import Sidebar from "@/components/layout/Sidebar";
-import DashboardTopbar from "@/components/layout/DashboardTopbar";
+import Sidebar from "@/components/dashboardPage/Sidebar";
+import DashboardTopbar from "@/components/dashboardPage/DashboardTopbar";
 import { getNavByRole } from "@/constants/nav-links";
 import useCurrentUser from "@/lib/core/use-current-user";
 

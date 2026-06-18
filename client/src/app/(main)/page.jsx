@@ -1,9 +1,9 @@
-import HeroSection from "@/components/public/HeroSection";
-import StatsRow from "@/components/public/StatsRow";
-import FeaturedJobs from "@/components/public/FeaturedJobs";
-import FeaturesSection from "@/components/public/FeaturesSection";
-import PricingPreview from "@/components/public/PricingPreview";
-import CTABanner from "@/components/public/CTABanner";
+import HeroSection from "@/components/homepage/HeroSection";
+import StatsRow from "@/components/homepage/StatsRow";
+import FeaturedJobs from "@/components/homepage/FeaturedJobs";
+import FeaturesSection from "@/components/homepage/FeaturesSection";
+import PricingPreview from "@/components/homepage/PricingPreview";
+import CTABanner from "@/components/homepage/CTABanner";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/core/session";
 

@@ -1,4 +1,4 @@
-import BrowseJobsClient from "@/components/jobs/BrowseJobsClient";
+import BrowseJobsClient from "@/components/jobsPage/BrowseJobsClient";
 import { getJobs } from "@/lib/api/jobs";
 import { normalizeJob } from "@/lib/marketplace/normalizers";
 

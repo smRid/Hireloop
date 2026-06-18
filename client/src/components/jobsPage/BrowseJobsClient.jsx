@@ -3,8 +3,8 @@
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
-import FilterSidebar from "@/components/jobs/FilterSidebar";
-import JobListings from "@/components/jobs/JobListings";
+import FilterSidebar from "@/components/jobsPage/FilterSidebar";
+import JobListings from "@/components/jobsPage/JobListings";
 
 const DEFAULT_FILTERS = {
   category: "",
