@@ -4,15 +4,11 @@ import FeaturedJobs from "@/components/public/FeaturedJobs";
 import FeaturesSection from "@/components/public/FeaturesSection";
 import PricingPreview from "@/components/public/PricingPreview";
 import CTABanner from "@/components/public/CTABanner";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/session/server";
 
 const HomePage = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  const user = session?.user;
+  const user = await getCurrentUser();
   const role = user?.role;
 
   if (!role) {

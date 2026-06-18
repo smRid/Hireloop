@@ -6,6 +6,8 @@ import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AuthBrandPanel from "@/components/auth/AuthBrandPanel";
 import GoogleAuth from "@/components/auth/GoogleAuth";
+import { signIn } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 /* ── Google logo SVG (official brand colours) ────────────────────── */
 function GoogleLogo() {
@@ -87,6 +89,7 @@ function PasswordInput({ id, value, onChange, placeholder, autoComplete }) {
     <div className="relative">
       <input
         id={id}
+        name={"password"}
         type={visible ? "text" : "password"}
         value={value}
         onChange={onChange}
@@ -118,6 +121,8 @@ function PasswordInput({ id, value, onChange, placeholder, autoComplete }) {
 
 /* ── Sign In form ────────────────────────────────────────────────── */
 export default function SignInPage() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
@@ -134,18 +139,40 @@ export default function SignInPage() {
     return e;
   }
 
-  function handleSubmit(evt) {
+  const handleSubmit = async (evt) => {
     evt.preventDefault();
-    const e = validate();
-    if (Object.keys(e).length) {
-      setErrors(e);
+
+    const errors = validate();
+
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors);
       return;
     }
+
     setErrors({});
     setLoading(true);
-    /* TODO: call auth endpoint */
-    setTimeout(() => setLoading(false), 1500);
-  }
+
+    try {
+      const payload = {
+        ...Object.fromEntries(new FormData(evt.currentTarget)),
+      };
+      console.log(payload);
+
+      const { error } = await signIn.email(payload);
+
+      if (error) {
+        setErrors({ email: error });
+        console.error(error);
+        return;
+      }
+
+      router.push("/");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     /* Full-viewport two-column shell */
@@ -235,6 +262,7 @@ export default function SignInPage() {
             <FormField id="email" label="Email address" error={errors.email}>
               <input
                 id="email"
+                name="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
