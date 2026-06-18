@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Plus,
   Pencil,
@@ -434,6 +435,7 @@ function PlanUsageBar({ used, limit }) {
    ════════════════════════════════════════════════════════════════════ */
 
 export default function ManageJobsPage() {
+  const router = useRouter();
   const [jobs, setJobs] = useState(INITIAL_JOBS);
   const [deleteTarget, setDeleteTarget] =
     useState(null); /* job object | null */
@@ -594,7 +596,14 @@ export default function ManageJobsPage() {
                       </IconBtn>
 
                       {/* View Applicants */}
-                      <IconBtn label={`View applicants for ${job.title}`}>
+                      <IconBtn
+                        label={`View applicants for ${job.title}`}
+                        onClick={() =>
+                          router.push(
+                            `/dashboard/recruiter/jobs/${job.id}/applicants`,
+                          )
+                        }
+                      >
                         <Users className="size-3.5" aria-hidden="true" />
                       </IconBtn>
 
