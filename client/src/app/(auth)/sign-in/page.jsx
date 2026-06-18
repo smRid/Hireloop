@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AuthBrandPanel from "@/components/auth/AuthBrandPanel";
+import GoogleAuth from "@/components/auth/GoogleAuth";
 
 /* ── Google logo SVG (official brand colours) ────────────────────── */
 function GoogleLogo() {
@@ -218,20 +219,7 @@ export default function SignInPage() {
           </div>
 
           {/* Google SSO */}
-          <button
-            type="button"
-            className={cn(
-              "mb-5 flex h-11 w-full items-center justify-center gap-3 rounded-xl",
-              "border border-border bg-popover",
-              "font-sans text-[14px] font-medium text-foreground",
-              "transition-all duration-150",
-              "hover:border-primary hover:bg-popover",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-            )}
-          >
-            <GoogleLogo />
-            Continue with Google
-          </button>
+          <GoogleAuth />
 
           {/* Divider */}
           <div className="mb-5">

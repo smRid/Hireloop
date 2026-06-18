@@ -6,6 +6,8 @@ import { Eye, EyeOff, ArrowRight, Search, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AuthBrandPanel from "@/components/auth/AuthBrandPanel";
 import GoogleAuth from "@/components/auth/GoogleAuth";
+import { signUp } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 /* ── "or continue with email" divider ────────────────────────────── */
 function OrDivider() {
@@ -63,6 +65,7 @@ function PasswordInput({
     <div className="relative">
       <input
         id={id}
+        name={"password"}
         type={visible ? "text" : "password"}
         value={value}
         onChange={onChange}
@@ -254,6 +257,8 @@ function TermsCheckbox({ checked, onChange, error }) {
 
 /* ── Sign Up page ────────────────────────────────────────────────── */
 export default function SignUpPage() {
+  const router = useRouter();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -276,18 +281,40 @@ export default function SignUpPage() {
     return e;
   }
 
-  function handleSubmit(evt) {
+  const handleSubmit = async (evt) => {
     evt.preventDefault();
-    const e = validate();
-    if (Object.keys(e).length) {
-      setErrors(e);
+
+    const errors = validate();
+
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors);
       return;
     }
+
     setErrors({});
     setLoading(true);
-    /* TODO: call auth endpoint */
-    setTimeout(() => setLoading(false), 1500);
-  }
+
+    try {
+      const payload = {
+        ...Object.fromEntries(new FormData(evt.currentTarget)),
+        role,
+      };
+
+      const { error } = await signUp.email(payload);
+
+      if (error) {
+        setErrors({ email: error });
+        console.error(error);
+        return;
+      }
+
+      router.push("/sign-in");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex min-h-screen w-full">
@@ -379,6 +406,7 @@ export default function SignUpPage() {
             <FormField id="name" label="Full name" error={errors.name}>
               <input
                 id="name"
+                name="name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -397,6 +425,7 @@ export default function SignUpPage() {
             <FormField id="email" label="Email address" error={errors.email}>
               <input
                 id="email"
+                name="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -412,7 +441,12 @@ export default function SignUpPage() {
             </FormField>
 
             {/* Password */}
-            <FormField id="password" label="Password" error={errors.password}>
+            <FormField
+              id="password"
+              name="password"
+              label="Password"
+              error={errors.password}
+            >
               <PasswordInput
                 id="password"
                 value={password}
