@@ -19,8 +19,14 @@ const jetBrains_Mono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: "Hireloop - Find Your Dream Job Today",
-  description: "Find your next opportunity with Hireloop",
+  applicationName: "Hireloop",
+  title: {
+    default: "Hireloop - Modern Job Hunting Portal",
+    template: "%s | Hireloop",
+  },
+  description:
+    "Hireloop helps job seekers discover roles, recruiters manage hiring, and admins operate a trusted job marketplace.",
+  keywords: ["jobs", "recruiting", "hiring", "careers", "job marketplace"],
 };
 
 export default function RootLayout({ children }) {
@@ -29,8 +35,8 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${syne.variable} ${dmSans.variable} ${jetBrains_Mono.variable} antialiased dark`}
     >
-      <body>
-        <main>{children}</main>
+      <body className="min-h-screen bg-background text-foreground">
+        {children}
       </body>
     </html>
   );

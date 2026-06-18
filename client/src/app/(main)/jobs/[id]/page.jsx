@@ -620,10 +620,10 @@ function SimilarJobs({ jobs }) {
    ──────────────────────────────────────────────────────────────────── */
 
 export default function JobDetailPage() {
-  const { jobId } = useParams();
+  const { id } = useParams();
   const [activeTab, setActiveTab] = useState("Overview");
 
-  const job = getJobById(jobId);
+  const job = getJobById(id);
 
   /* ── 404 state ── */
   if (!job) {
