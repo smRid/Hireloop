@@ -70,7 +70,10 @@ export const auth = betterAuth({
     },
   },
   plugins: [
-    admin(),
+    admin({
+      defaultRole: "seeker",
+      adminRoles: ["admin"],
+    }),
     dash({
       apiKey: process.env.BETTER_AUTH_API_KEY,
     }),

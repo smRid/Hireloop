@@ -14,6 +14,10 @@ export const getCurrentUser = async () => {
   return session?.user ?? null;
 };
 
+const normalizeRole = (role) => {
+  return role === "user" ? "seeker" : role;
+};
+
 export const requireUser = async () => {
   const user = await getCurrentUser();
 
@@ -31,14 +35,15 @@ export const requireUser = async () => {
 export const requireRole = async (roles) => {
   const user = await requireUser();
   const allowedRoles = Array.isArray(roles) ? roles : [roles];
+  const role = normalizeRole(user.role);
 
-  if (!user.role) {
+  if (!role) {
     redirect("/onboarding");
   }
 
-  if (!allowedRoles.includes(user.role)) {
+  if (!allowedRoles.includes(role)) {
     redirect("/forbidden");
   }
 
-  return user;
+  return { ...user, role };
 };
