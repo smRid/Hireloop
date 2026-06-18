@@ -5,5 +5,5 @@ export const getCompanies = () => {
 };
 
 export const getCompaniesByRecruiterId = (recruiterId) => {
-  return serverFetch(`/companies/${recruiterId}`, { cache: "no-store" });
+  return serverFetch(`/companies/recruiter/${recruiterId}`, { cache: "no-store" });
 };

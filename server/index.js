@@ -472,6 +472,51 @@ const buildJobQuery = (queryParams) => {
   return query;
 };
 
+const pickFields = (source, fields) => {
+  return fields.reduce((picked, field) => {
+    if (source[field] !== undefined) picked[field] = source[field];
+    return picked;
+  }, {});
+};
+
+const editableCompanyFields = [
+  "name",
+  "industry",
+  "websiteUrl",
+  "location",
+  "employeeCount",
+  "logoUrl",
+  "description",
+];
+
+const isApprovedCompany = (company) => {
+  return ["approved", "verified"].includes(company?.status);
+};
+
+const withApplicantCounts = async (jobs) => {
+  const plainJobs = jobs.map((job) =>
+    typeof job.toObject === "function" ? job.toObject() : job,
+  );
+  const jobIds = plainJobs.map((job) => job._id.toString());
+
+  if (jobIds.length === 0) {
+    return plainJobs;
+  }
+
+  const counts = await Application.aggregate([
+    { $match: { jobId: { $in: jobIds } } },
+    { $group: { _id: "$jobId", count: { $sum: 1 } } },
+  ]);
+  const countMap = new Map(
+    counts.map((item) => [item._id, item.count]),
+  );
+
+  return plainJobs.map((job) => ({
+    ...job,
+    applicantsCount: countMap.get(job._id.toString()) ?? 0,
+  }));
+};
+
 app.get("/", (req, res) => {
   res.send("Server is cooking!");
 });
@@ -564,30 +609,44 @@ app.post(
   },
 );
 
-app.patch("/api/companies/:id", verifyToken, verifyRole("admin"), async (req, res) => {
-  try {
-    const status = normalizeCompanyStatus(req.body.status);
+app.patch(
+  "/api/companies/:id",
+  verifyToken,
+  verifyRole("recruiter", "admin"),
+  async (req, res) => {
+    try {
+      const company = await Company.findById(req.params.id);
 
-    if (!["pending", "approved", "rejected"].includes(status)) {
-      return res.status(400).json({ message: "Invalid company status" });
+      if (!company) {
+        return res.status(404).json({ message: "Company not found" });
+      }
+
+      if (req.user.role !== "admin" && !isSameUser(req.user, company.recruiterId)) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
+      const updates = pickFields(req.body, editableCompanyFields);
+
+      if (req.user.role === "admin" && req.body.status !== undefined) {
+        const status = normalizeCompanyStatus(req.body.status);
+
+        if (!["pending", "approved", "rejected"].includes(status)) {
+          return res.status(400).json({ message: "Invalid company status" });
+        }
+
+        updates.status = status;
+      }
+
+      Object.assign(company, updates);
+      await company.save();
+
+      res.status(200).json(company);
+    } catch (error) {
+      console.error("[companies:update]", error);
+      res.status(500).json({ message: "Server error", error: error.message });
     }
-
-    const company = await Company.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true },
-    );
-
-    if (!company) {
-      return res.status(404).json({ message: "Company not found" });
-    }
-
-    res.status(200).json(company);
-  } catch (error) {
-    console.error("[companies:update-status]", error);
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
-});
+  },
+);
 
 app.patch(
   "/api/companies/:id/status",
@@ -655,10 +714,11 @@ app.get("/api/jobs", async (req, res) => {
     );
     const skip = (page - 1) * perPage;
 
-    const [total, jobs] = await Promise.all([
+    const [total, jobDocs] = await Promise.all([
       Job.countDocuments(query),
       Job.find(query).sort({ createdAt: -1 }).skip(skip).limit(perPage),
     ]);
+    const jobs = await withApplicantCounts(jobDocs);
 
     res.status(200).json({ total, page, perPage, jobs });
   } catch (error) {
@@ -675,8 +735,21 @@ app.post("/api/jobs", verifyToken, verifyRole("recruiter"), async (req, res) => 
       return res.status(403).json({ message: "Forbidden" });
     }
 
+    const company = await Company.findById(req.body.companyId);
+
+    if (!company || !isSameUser(req.user, company.recruiterId)) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    if (!isApprovedCompany(company)) {
+      return res.status(400).json({
+        message: "Company must be approved before posting jobs",
+      });
+    }
+
     const job = await Job.create({
       ...req.body,
+      companyName: company.name,
       recruiterId,
       status: req.body.status ?? "active",
     });
@@ -696,7 +769,9 @@ app.get("/api/jobs/:id", async (req, res) => {
       return res.status(404).json({ message: "Job not found" });
     }
 
-    res.status(200).json(job);
+    const [jobWithCount] = await withApplicantCounts([job]);
+
+    res.status(200).json(jobWithCount);
   } catch (error) {
     console.error("[jobs:get-by-id]", error);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -719,10 +794,32 @@ app.patch(
         return res.status(403).json({ message: "Forbidden" });
       }
 
-      Object.assign(job, req.body);
+      const updates = { ...req.body };
+      delete updates.companyName;
+
+      if (updates.companyId && updates.companyId !== job.companyId) {
+        const company = await Company.findById(updates.companyId);
+
+        if (!company || !isSameUser(req.user, company.recruiterId)) {
+          return res.status(403).json({ message: "Forbidden" });
+        }
+
+        if (!isApprovedCompany(company)) {
+          return res.status(400).json({
+            message: "Company must be approved before posting jobs",
+          });
+        }
+
+        updates.companyName = company.name;
+      }
+
+      delete updates.recruiterId;
+      Object.assign(job, updates);
       await job.save();
 
-      res.status(200).json(job);
+      const [jobWithCount] = await withApplicantCounts([job]);
+
+      res.status(200).json(jobWithCount);
     } catch (error) {
       console.error("[jobs:update]", error);
       res.status(500).json({ message: "Server error", error: error.message });
@@ -778,7 +875,28 @@ app.get(
         query.applicantId = getUserId(req.user);
       }
 
-      if (req.query.jobId) query.jobId = req.query.jobId;
+      if (req.user.role === "recruiter") {
+        if (req.query.jobId) {
+          const job = await Job.findById(req.query.jobId).lean();
+
+          if (!job || !isSameUser(req.user, job.recruiterId)) {
+            return res.status(403).json({ message: "Forbidden" });
+          }
+
+          query.jobId = req.query.jobId;
+        } else {
+          const jobs = await Job.find({
+            recruiterId: getUserId(req.user),
+          }).select("_id");
+
+          query.jobId = {
+            $in: jobs.map((job) => job._id.toString()),
+          };
+        }
+      } else if (req.query.jobId) {
+        query.jobId = req.query.jobId;
+      }
+
       if (req.query.status) query.status = req.query.status;
 
       const applications = await Application.find(query).sort({
