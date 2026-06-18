@@ -18,7 +18,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import useCurrentUser from "@/lib/session/client";
+import useCurrentUser from "@/lib/core/use-current-user";
 
 /* ════════════════════════════════════════════════════════════════════
    MOCK DATA

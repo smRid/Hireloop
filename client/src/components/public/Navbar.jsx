@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import BrandMark from "@/components/shared/BrandMark";
-import useCurrentUser from "@/lib/session/client";
+import useCurrentUser from "@/lib/core/use-current-user";
 import NavLink from "./navbar/NavLink";
 import GuestButtons from "./navbar/GuestButtons";
 import UserMenu from "./navbar/UserMenu";

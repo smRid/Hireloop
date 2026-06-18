@@ -5,7 +5,7 @@ import FeaturesSection from "@/components/public/FeaturesSection";
 import PricingPreview from "@/components/public/PricingPreview";
 import CTABanner from "@/components/public/CTABanner";
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/session/server";
+import { getCurrentUser } from "@/lib/core/session";
 
 const HomePage = async () => {
   const user = await getCurrentUser();

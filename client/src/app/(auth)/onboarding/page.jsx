@@ -6,7 +6,7 @@ import { Search, Briefcase, Check, ArrowRight, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
-import { setRole } from "@/services/users.service";
+import { setRole } from "@/lib/actions/users";
 
 /* ════════════════════════════════════════════════════════════════════
    MOCK — replace with real session from auth provider

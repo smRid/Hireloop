@@ -28,8 +28,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import useCurrentUser from "@/lib/session/client";
-import { registerCompany } from "@/services/companies.service";
+import useCurrentUser from "@/lib/core/use-current-user";
+import { registerCompany } from "@/lib/actions/companies";
 
 /* ════════════════════════════════════════════════════════════════════
    CONSTANTS

@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import Sidebar from "@/components/layout/Sidebar";
 import DashboardTopbar from "@/components/layout/DashboardTopbar";
 import { getNavByRole } from "@/constants/nav-links";
-import useCurrentUser from "@/lib/session/client";
+import useCurrentUser from "@/lib/core/use-current-user";
 
 /* ── Page title context ──────────────────────────────────────────── */
 /* Child pages can call usePageTitle() to override the topbar title  */

@@ -1,3 +1,5 @@
+"use client";
+
 import { useSession } from "@/lib/auth-client";
 
 const useCurrentUser = () => {
@@ -8,7 +10,7 @@ const useCurrentUser = () => {
     session,
     isLoading: isPending,
     error,
-    isAuthenticated: !!session?.user,
+    isAuthenticated: Boolean(session?.user),
   };
 };
 
