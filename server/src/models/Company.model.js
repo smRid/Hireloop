@@ -35,6 +35,11 @@ const companySchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    status: {
+      type: String,
+      enum: ["pending", "verified", "rejected"],
+      default: "pending",
+    },
   },
   { timestamps: true },
 );

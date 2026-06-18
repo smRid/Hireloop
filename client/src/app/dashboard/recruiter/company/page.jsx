@@ -28,6 +28,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import useCurrentUser from "@/lib/session/client";
+import { registerCompany } from "@/services/companies.service";
 
 /* ════════════════════════════════════════════════════════════════════
    CONSTANTS
@@ -63,6 +65,18 @@ const EMPLOYEE_RANGES = [
   "5,001 – 10,000",
   "10,000+",
 ];
+
+/* Lower-bound numeric value for each range — matches schema's Number type */
+const EMPLOYEE_RANGE_TO_NUMBER = {
+  "1 – 10": 1,
+  "11 – 50": 11,
+  "51 – 200": 51,
+  "201 – 500": 201,
+  "501 – 1,000": 501,
+  "1,001 – 5,000": 1001,
+  "5,001 – 10,000": 5001,
+  "10,000+": 10000,
+};
 
 /* ── Status badge config ─────────────────────────────────────────── */
 const STATUS_CONFIG = {
@@ -190,11 +204,15 @@ const EMPTY_FORM = {
   location: "",
   employees: "",
   description: "",
-  logoFile: null,
-  logoPreview: null,
+  /* logo upload state */
+  logoFile: null /* raw File object — for local preview */,
+  logoPreview: null /* local object URL — shown while uploading */,
+  logoUrl: null /* final imgbb URL — stored on submit */,
+  logoUploading: false /* upload-in-progress flag */,
+  logoError: null /* per-field upload error */,
 };
 
-function RegisterCompanyModal({ open, onClose, onSubmit }) {
+function RegisterCompanyModal({ open, onClose, onSubmit, recruiterId }) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -205,16 +223,54 @@ function RegisterCompanyModal({ open, onClose, onSubmit }) {
     if (errors[field]) setErrors((e) => ({ ...e, [field]: undefined }));
   }
 
-  function handleFileChange(e) {
+  async function handleFileChange(e) {
     const file = e.target.files?.[0];
     if (!file) return;
-    set("logoFile", file);
-    set("logoPreview", URL.createObjectURL(file));
+
+    /* Show local preview immediately */
+    const localPreview = URL.createObjectURL(file);
+    setForm((f) => ({
+      ...f,
+      logoFile: file,
+      logoPreview: localPreview,
+      logoUrl: null,
+      logoUploading: true,
+      logoError: null,
+    }));
+
+    /* Upload to imgbb via our API route */
+    try {
+      const fd = new FormData();
+      fd.append("image", file);
+      const res = await fetch("/api/upload/logo", { method: "POST", body: fd });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error ?? "Upload failed.");
+
+      setForm((f) => ({
+        ...f,
+        logoUrl: data.url,
+        logoUploading: false,
+        logoError: null,
+      }));
+    } catch (err) {
+      setForm((f) => ({
+        ...f,
+        logoUploading: false,
+        logoError: err.message ?? "Upload failed. Try again.",
+      }));
+    }
   }
 
   function removeLogo() {
-    set("logoFile", null);
-    set("logoPreview", null);
+    setForm((f) => ({
+      ...f,
+      logoFile: null,
+      logoPreview: null,
+      logoUrl: null,
+      logoUploading: false,
+      logoError: null,
+    }));
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
@@ -224,32 +280,76 @@ function RegisterCompanyModal({ open, onClose, onSubmit }) {
     if (!form.industry) e.industry = "Select an industry.";
     if (!form.location.trim()) e.location = "Location is required.";
     if (!form.employees) e.employees = "Select employee range.";
-    if (form.website && !/^https?:\/\/.+/.test(form.website))
+    if (!form.website.trim()) {
+      e.website = "Website URL is required.";
+    } else if (!/^https?:\/\/.+/.test(form.website)) {
       e.website = "Enter a valid URL starting with https://";
+    }
     if (!form.description.trim()) e.description = "Add a brief description.";
+    if (form.logoFile && !form.logoUrl && !form.logoUploading)
+      e.logo = "Logo upload failed. Remove it or try again.";
+    if (form.logoUploading) e.logo = "Logo is still uploading. Please wait.";
     return e;
   }
 
-  function handleSubmit(evt) {
+  async function handleSubmit(evt) {
     evt.preventDefault();
     const e = validate();
     if (Object.keys(e).length) {
       setErrors(e);
       return;
     }
-    setLoading(true);
-    /* Simulate async submit */
-    setTimeout(() => {
-      onSubmit({
-        ...form,
-        id: Date.now(),
-        status: "PENDING",
-        initials: form.name.slice(0, 2),
+
+    /* Guard: session must be resolved before we can attach recruiterId */
+    if (!recruiterId) {
+      setErrors({
+        submit:
+          "Your session hasn't loaded yet. Please wait a moment and try again.",
       });
+      return;
+    }
+
+    setLoading(true);
+
+    /* Build the payload to exactly match Company.model.js */
+    const payload = {
+      name: form.name.trim(),
+      industry: form.industry,
+      websiteUrl: form.website.trim(),
+      location: form.location.trim(),
+      employeeCount: EMPLOYEE_RANGE_TO_NUMBER[form.employees] ?? 1,
+      logoUrl: form.logoUrl ?? "",
+      description: form.description.trim(),
+      recruiterId,
+    };
+
+    try {
+      const { data, error } = await registerCompany(payload);
+
+      if (error) throw new Error(error);
+
+      /* Pass the server-returned document back to the page */
+      const companyName = data.name ?? form.name.trim();
+      onSubmit({
+        id: data._id,
+        name: companyName,
+        initials: companyName.slice(0, 2),
+        industry: data.industry,
+        location: data.location,
+        employees: form.employees /* keep the display label */,
+        description: data.description,
+        website: data.websiteUrl,
+        logoUrl: data.logoUrl,
+        status: data.status ?? "PENDING",
+      });
+
       setForm(EMPTY_FORM);
       setErrors({});
+    } catch (err) {
+      setErrors({ submit: err.message ?? "Something went wrong. Try again." });
+    } finally {
       setLoading(false);
-    }, 900);
+    }
   }
 
   function handleOpenChange(open) {
@@ -469,24 +569,70 @@ function RegisterCompanyModal({ open, onClose, onSubmit }) {
                   aria-label="Upload company logo"
                 />
                 {form.logoPreview ? (
-                  /* Preview with remove button */
-                  <div className="relative flex h-18 items-center gap-3 rounded-lg border border-border bg-popover px-4">
+                  /* Preview with upload status */
+                  <div
+                    className={cn(
+                      "relative flex h-18 items-center gap-3 rounded-lg border bg-popover px-4",
+                      form.logoError ? "border-destructive" : "border-border",
+                    )}
+                  >
+                    {/* Thumbnail */}
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={form.logoPreview}
                       alt="Logo preview"
                       className="size-10 rounded-md object-contain"
                     />
-                    <div className="flex flex-col gap-0.5">
+                    <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                       <span className="font-sans text-[13px] font-medium text-foreground truncate max-w-35">
                         {form.logoFile?.name}
                       </span>
-                      <span className="font-sans text-[12px] text-muted-foreground">
-                        {form.logoFile
-                          ? `${(form.logoFile.size / 1024).toFixed(0)} KB`
-                          : ""}
-                      </span>
+
+                      {/* Status line */}
+                      {form.logoUploading ? (
+                        <span className="flex items-center gap-1.5 font-sans text-[12px] text-muted-foreground">
+                          <svg
+                            className="size-3 animate-spin text-primary"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            aria-hidden="true"
+                          >
+                            <circle
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="3"
+                              className="opacity-25"
+                            />
+                            <path
+                              d="M4 12a8 8 0 018-8"
+                              stroke="currentColor"
+                              strokeWidth="3"
+                              strokeLinecap="round"
+                              className="opacity-75"
+                            />
+                          </svg>
+                          Uploading…
+                        </span>
+                      ) : form.logoError ? (
+                        <span className="font-sans text-[12px] text-destructive">
+                          {form.logoError}
+                        </span>
+                      ) : form.logoUrl ? (
+                        <span className="font-sans text-[12px] text-chart-3">
+                          Uploaded successfully
+                        </span>
+                      ) : (
+                        <span className="font-sans text-[12px] text-muted-foreground">
+                          {form.logoFile
+                            ? `${(form.logoFile.size / 1024).toFixed(0)} KB`
+                            : ""}
+                        </span>
+                      )}
                     </div>
+
+                    {/* Remove button */}
                     <button
                       type="button"
                       onClick={removeLogo}
@@ -523,6 +669,14 @@ function RegisterCompanyModal({ open, onClose, onSubmit }) {
                     </span>
                   </button>
                 )}
+                {errors.logo && (
+                  <p
+                    className="font-sans text-[12px] text-destructive"
+                    role="alert"
+                  >
+                    {errors.logo}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -557,6 +711,15 @@ function RegisterCompanyModal({ open, onClose, onSubmit }) {
 
           {/* ── Footer ── */}
           <DialogFooter className="mt-6">
+            {/* Submit-level error */}
+            {errors.submit && (
+              <p
+                className="w-full font-sans text-[12px] text-destructive sm:text-left"
+                role="alert"
+              >
+                {errors.submit}
+              </p>
+            )}
             {/* Cancel */}
             <button
               type="button"
@@ -763,6 +926,8 @@ function CompanyCard({ company }) {
    ════════════════════════════════════════════════════════════════════ */
 
 export default function MyCompanyPage() {
+  const { user } = useCurrentUser();
+  const recruiterId = user?.id ?? null;
   const [companies, setCompanies] = useState(INITIAL_COMPANIES);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -829,6 +994,7 @@ export default function MyCompanyPage() {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onSubmit={handleRegister}
+        recruiterId={recruiterId}
       />
     </div>
   );
