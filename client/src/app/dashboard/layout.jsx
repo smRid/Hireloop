@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import Sidebar from "@/components/layout/Sidebar";
 import DashboardTopbar from "@/components/layout/DashboardTopbar";
 import { getNavByRole } from "@/constants/nav-links";
+import useCurrentUser from "@/lib/session/client";
 
 /* ── Page title context ──────────────────────────────────────────── */
 /* Child pages can call usePageTitle() to override the topbar title  */
@@ -30,18 +31,10 @@ function titleFromPathname(pathname, navItems) {
   return match?.label ?? "Dashboard";
 }
 
-/* ── Mock user — replace with real auth session ──────────────────── */
-const MOCK_USER = {
-  name: "Alex Johnson",
-  email: "alex@example.com",
-  role: "recruiter" /* "seeker" | "recruiter" | "admin" */,
-  plan: "growth" /* "free" | "pro" | "premium" | "growth" | "enterprise" */,
-};
-
 /* ── Dashboard root layout ───────────────────────────────────────── */
 export default function DashboardLayout({ children }) {
   const pathname = usePathname();
-  const user = MOCK_USER;
+  const user = useCurrentUser().user || {};
   const navItems = getNavByRole(user.role);
   const autoTitle = titleFromPathname(pathname, navItems);
   const [title, setTitle] = useState(autoTitle);

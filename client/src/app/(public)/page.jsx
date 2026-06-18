@@ -10,8 +10,8 @@ import { getCurrentUser } from "@/lib/session/server";
 const HomePage = async () => {
   const user = await getCurrentUser();
   const role = user?.role;
-
-  if (!role) {
+  
+  if (user && !role) {
     redirect("/onboarding");
   }
 

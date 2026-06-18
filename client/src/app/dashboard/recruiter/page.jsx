@@ -18,6 +18,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import useCurrentUser from "@/lib/session/client";
 
 /* ════════════════════════════════════════════════════════════════════
    MOCK DATA
@@ -473,15 +474,17 @@ function todayLabel() {
   });
 }
 
-const RECRUITER_NAME = "Alex"; /* replace with auth user.firstName */
-
 export default function RecruiterDashboardPage() {
+  const { user: recruiter, isLoading } = useCurrentUser();
+  if (isLoading) return null; // session is still being fetched
+  const recruiterName = recruiter?.name?.split(" ")[0] ?? "User";
+
   return (
     <div className="flex flex-col gap-8">
       {/* ── Page heading ── */}
       <div className="flex flex-col gap-1">
         <h1 className="font-heading text-[28px] font-bold leading-tight text-primary">
-          Welcome back, {RECRUITER_NAME} 👋
+          Welcome back, {recruiterName} 👋
         </h1>
         <p className="font-sans text-[14px] text-muted-foreground">
           {todayLabel()}

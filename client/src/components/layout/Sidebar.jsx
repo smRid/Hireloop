@@ -118,15 +118,7 @@ function NavItem({ item, pathname }) {
 /* ── Main Sidebar ────────────────────────────────────────────────── */
 export default function Sidebar({ user }) {
   const pathname = usePathname();
-
-  /* Fallback mock user for demo — replaced by real auth context */
-  const u = user ?? {
-    name: "Alex Johnson",
-    email: "alex@example.com",
-    role: "seeker",
-    plan: "premium",
-  };
-
+  const u = user ?? {};
   const navItems = getNavByRole(u.role);
   const roleBadge = ROLE_BADGE[u.role] ?? ROLE_BADGE.seeker;
   const planBadge = PLAN_BADGE[u.plan] ?? null;

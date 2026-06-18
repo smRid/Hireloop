@@ -12,6 +12,7 @@ import Link from "next/link";
 import { LayoutDashboard, LogOut, Settings, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import dashboardHref from "./dashboardHref";
+import { signOut } from "@/lib/auth-client";
 
 const UserMenu = ({ session }) => {
   const user = session?.user ?? {};
