@@ -244,7 +244,7 @@ const CONFIRM_VARIANTS = {
   suspend: {
     title: "Suspend Account?",
     description: (name) =>
-      `${name}'s account will be suspended. They will lose all access to Seekcruitr until reactivated. This can be reversed.`,
+      `${name}'s account will be suspended. They will lose all access to Hireloop until reactivated. This can be reversed.`,
     icon: AlertTriangle,
     iconCls: "bg-chart-4/10 text-chart-4",
     actionLabel: "Suspend",
@@ -259,7 +259,7 @@ const CONFIRM_VARIANTS = {
   activate: {
     title: "Activate Account?",
     description: (name) =>
-      `${name}'s account will be reactivated. They will immediately regain access to Seekcruitr.`,
+      `${name}'s account will be reactivated. They will immediately regain access to Hireloop.`,
     icon: ShieldAlert,
     iconCls: "bg-chart-3/10 text-chart-3",
     actionLabel: "Activate",

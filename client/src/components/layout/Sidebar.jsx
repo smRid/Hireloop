@@ -270,7 +270,7 @@ export default function Sidebar({ user }) {
             "flex items-center gap-2.5 select-none",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md",
           )}
-          aria-label="Seekcruitr home"
+          aria-label="Hireloop home"
         >
           {/* BrandMark inline at sidebar scale */}
           <svg
@@ -310,7 +310,7 @@ export default function Sidebar({ user }) {
             />
           </svg>
           <span className="font-heading text-[18px] font-bold leading-none tracking-tight text-foreground">
-            Seekcruitr
+            Hireloop
           </span>
         </Link>
       </div>

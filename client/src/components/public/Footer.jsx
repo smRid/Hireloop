@@ -30,13 +30,13 @@ const COMPANY_LINKS = [
 const SOCIAL_LINKS = [
   {
     label: "LinkedIn",
-    href: "https://linkedin.com/company/seekcruitr",
+    href: "https://linkedin.com/company/hireloop",
     icon: FaLinkedin,
   },
-  { label: "GitHub", href: "https://github.com/seekcruitr", icon: FaGithub },
+  { label: "GitHub", href: "https://github.com/hireloop", icon: FaGithub },
   {
     label: "X (Twitter)",
-    href: "https://twitter.com/seekcruitr",
+    href: "https://twitter.com/hireloop",
     icon: FaXTwitter,
   },
 ];
@@ -77,11 +77,11 @@ export default function Footer() {
             <Link
               href="/"
               className="flex items-center gap-2.5 select-none"
-              aria-label="Seekcruitr home"
+              aria-label="Hireloop home"
             >
               <BrandMark />
               <span className="font-heading text-[20px] font-bold leading-none text-foreground tracking-tight">
-                Seekcruitr
+                Hireloop
               </span>
             </Link>
 
@@ -162,7 +162,7 @@ export default function Footer() {
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           {/* Copyright */}
           <p className="font-sans text-[13px] text-muted-foreground">
-            © {currentYear} Seekcruitr. All rights reserved.
+            © {currentYear} Hireloop. All rights reserved.
           </p>
 
           {/* Legal links */}

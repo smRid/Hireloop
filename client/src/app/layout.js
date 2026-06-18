@@ -19,8 +19,8 @@ const jetBrains_Mono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: "Seekcruitr - Find Your Dream Job Today",
-  description: "Find your next opportunity with Seekcruitr",
+  title: "Hireloop - Find Your Dream Job Today",
+  description: "Find your next opportunity with Hireloop",
 };
 
 export default function RootLayout({ children }) {

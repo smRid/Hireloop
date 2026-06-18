@@ -173,7 +173,7 @@ export default function OnboardingPage() {
             "flex items-center gap-2.5 select-none",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md",
           )}
-          aria-label="Seekcruitr home"
+          aria-label="Hireloop home"
         >
           <svg
             width="28"
@@ -212,7 +212,7 @@ export default function OnboardingPage() {
             />
           </svg>
           <span className="font-heading text-[22px] font-bold leading-none tracking-tight text-foreground">
-            Seekcruitr
+            Hireloop
           </span>
         </Link>
 
@@ -235,7 +235,7 @@ export default function OnboardingPage() {
         {/* Heading */}
         <div className="mb-8 flex flex-col items-center gap-2 text-center">
           <h1 className="font-heading text-[28px] font-bold leading-tight text-foreground">
-            How will you use Seekcruitr?
+            How will you use Hireloop?
           </h1>
           <p className="font-sans text-[14px] leading-relaxed text-muted-foreground">
             Choose your role.{" "}

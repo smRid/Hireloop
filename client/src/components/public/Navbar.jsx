@@ -38,11 +38,11 @@ export default function Navbar() {
           <Link
             href="/"
             className="flex items-center gap-2.5 select-none"
-            aria-label="Seekcruitr home"
+            aria-label="Hireloop home"
           >
             <BrandMark />
             <span className="font-heading text-[22px] font-bold leading-none text-foreground tracking-tight">
-              Seekcruitr
+              Hireloop
             </span>
           </Link>
 

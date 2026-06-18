@@ -118,7 +118,7 @@ export default function CTABanner() {
             )}
           >
             Join over 2 million job seekers who found their next opportunity on
-            Seekcruitr. Free to start, powerful from day one.
+            Hireloop. Free to start, powerful from day one.
           </p>
 
           {/* Buttons */}

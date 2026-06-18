@@ -127,7 +127,7 @@ export default function AuthBrandPanel() {
             />
           </svg>
           <span className="font-heading text-[28px] font-bold leading-none text-foreground tracking-tight">
-            Seekcruitr
+            Hireloop
           </span>
         </Link>
 
@@ -142,7 +142,7 @@ export default function AuthBrandPanel() {
           </p>
           <p className="font-sans text-[15px] leading-relaxed text-muted-foreground">
             Join over 2 million professionals who found their dream job through
-            Seekcruitr.
+            Hireloop.
           </p>
         </div>
 
@@ -156,7 +156,7 @@ export default function AuthBrandPanel() {
 
       {/* ── Bottom attribution ── */}
       <p className="absolute bottom-6 font-sans text-[12px] text-muted-foreground/50">
-        © {new Date().getFullYear()} Seekcruitr. All rights reserved.
+        © {new Date().getFullYear()} Hireloop. All rights reserved.
       </p>
     </div>
   );

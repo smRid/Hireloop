@@ -191,7 +191,7 @@ export default function SignInPage() {
         <Link
           href="/"
           className="mb-8 flex items-center gap-2.5 select-none lg:hidden"
-          aria-label="Seekcruitr home"
+          aria-label="Hireloop home"
         >
           <svg
             width="24"
@@ -229,7 +229,7 @@ export default function SignInPage() {
             />
           </svg>
           <span className="font-heading text-[22px] font-bold leading-none text-foreground">
-            Seekcruitr
+            Hireloop
           </span>
         </Link>
 
@@ -241,7 +241,7 @@ export default function SignInPage() {
               Welcome back
             </h1>
             <p className="font-sans text-[14px] text-muted-foreground">
-              Sign in to your Seekcruitr account.
+              Sign in to your Hireloop account.
             </p>
           </div>
 

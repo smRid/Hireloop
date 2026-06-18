@@ -7,7 +7,7 @@ if (!process.env.MONGO_DB_URI) {
 }
 
 const client = new MongoClient(process.env.MONGO_DB_URI);
-const db = client.db("seekcruitr");
+const db = client.db("hireloop");
 
 export const auth = betterAuth({
   database: mongodbAdapter(db, {

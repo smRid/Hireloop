@@ -38,7 +38,7 @@ const MOCK_USERS = {
   },
   admin: {
     name: "Tom Eriksson",
-    email: "tom.eriksson@seekcruitr.io",
+    email: "tom.eriksson@hireloop.io",
     initials: "TE",
   },
 };
@@ -579,7 +579,7 @@ const NOTIFICATION_GROUPS = [
       {
         id: "notif-product",
         label: "Product updates",
-        description: "Occasional emails about new Seekcruitr features.",
+        description: "Occasional emails about new Hireloop features.",
         default: false,
       },
     ],

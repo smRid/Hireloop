@@ -334,7 +334,7 @@ export default function SignUpPage() {
         <Link
           href="/"
           className="mb-8 flex items-center gap-2.5 select-none lg:hidden"
-          aria-label="Seekcruitr home"
+          aria-label="Hireloop home"
         >
           <svg
             width="24"
@@ -372,7 +372,7 @@ export default function SignUpPage() {
             />
           </svg>
           <span className="font-heading text-[22px] font-bold leading-none text-foreground">
-            Seekcruitr
+            Hireloop
           </span>
         </Link>
 
