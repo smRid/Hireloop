@@ -27,6 +27,10 @@ export const auth = betterAuth({
         enum: ["free", "pro", "premium", "growth", "enterprise"],
         defaultValue: "free",
       },
+      applicationsUsedThisMonth: {
+        type: "number",
+        defaultValue: 0,
+      },
     },
   },
   emailAndPassword: {

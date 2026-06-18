@@ -18,8 +18,12 @@ const userSchema = new mongoose.Schema(
     },
     plan: {
       type: String,
-      enum: ["free", "premium"],
+      enum: ["free", "pro", "premium", "growth", "enterprise"],
       default: "free",
+    },
+    applicationsUsedThisMonth: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true },
