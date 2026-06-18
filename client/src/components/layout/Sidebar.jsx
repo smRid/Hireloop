@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut } from "lucide-react";
+import { LogOut, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getNavByRole } from "@/constants/nav-links";
 
@@ -111,6 +112,132 @@ function NavItem({ item, pathname }) {
         />
         <span className="truncate">{label}</span>
       </Link>
+    </li>
+  );
+}
+
+/* ── Collapsible nav group (parent + children) ───────────────────── */
+function NavGroup({ item, pathname }) {
+  const { label, href, icon: Icon, children } = item;
+
+  /* Parent is active on exact match; children checked separately */
+  const parentActive = pathname === href;
+  const childActive = children.some(
+    (c) => pathname === c.href || pathname.startsWith(c.href),
+  );
+
+  /* Auto-open when the current route is inside this group */
+  const [open, setOpen] = useState(parentActive || childActive);
+
+  const triggerActive = parentActive || childActive;
+
+  return (
+    <li>
+      {/* ── Group trigger ── */}
+      <div className="flex items-center gap-0.5">
+        {/* Clicking the label navigates AND opens the drawer */}
+        <Link
+          href={href}
+          aria-current={parentActive ? "page" : undefined}
+          onClick={() => setOpen(true)}
+          className={cn(
+            "group relative flex h-9 flex-1 items-center gap-3 rounded-lg px-3",
+            "font-sans text-[14px] transition-all duration-150",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            triggerActive
+              ? [
+                  "bg-popover text-primary font-medium",
+                  "shadow-[inset_2px_0_0_0_var(--primary)]",
+                ]
+              : [
+                  "text-muted-foreground",
+                  "hover:bg-popover hover:text-foreground",
+                ],
+          )}
+        >
+          <Icon
+            className={cn(
+              "size-4.5 shrink-0 transition-colors duration-150",
+              triggerActive
+                ? "text-primary"
+                : "text-muted-foreground group-hover:text-foreground",
+            )}
+            aria-hidden="true"
+            strokeWidth={triggerActive ? 2 : 1.75}
+          />
+          <span className="truncate">{label}</span>
+        </Link>
+
+        {/* Chevron — toggles open/closed independently */}
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-label={open ? `Collapse ${label}` : `Expand ${label}`}
+          className={cn(
+            "flex size-9 shrink-0 items-center justify-center rounded-lg",
+            "transition-colors duration-150",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            triggerActive
+              ? "text-primary hover:bg-popover"
+              : "text-muted-foreground hover:bg-popover hover:text-foreground",
+          )}
+        >
+          <ChevronRight
+            className={cn(
+              "size-3.5 transition-transform duration-200",
+              open && "rotate-90",
+            )}
+            aria-hidden="true"
+          />
+        </button>
+      </div>
+
+      {/* ── Children ── */}
+      {open && (
+        <ul className="mt-0.5 flex flex-col gap-0.5 pl-4" role="list">
+          {/* Left connector line */}
+          <div className="relative">
+            <span
+              className="pointer-events-none absolute left-1.5 top-0 bottom-0 w-px bg-border"
+              aria-hidden="true"
+            />
+            {children.map((child) => {
+              const childIsActive =
+                pathname === child.href || pathname.startsWith(child.href);
+              const ChildIcon = child.icon;
+              return (
+                <li key={child.href}>
+                  <Link
+                    href={child.href}
+                    aria-current={childIsActive ? "page" : undefined}
+                    className={cn(
+                      "group relative flex h-8 items-center gap-3 rounded-lg pl-5 pr-3",
+                      "font-sans text-[13px] transition-all duration-150",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                      childIsActive
+                        ? "bg-popover text-primary font-medium"
+                        : "text-muted-foreground hover:bg-popover hover:text-foreground",
+                    )}
+                  >
+                    <ChildIcon
+                      className={cn(
+                        "size-3.5 shrink-0 transition-colors duration-150",
+                        childIsActive
+                          ? "text-primary"
+                          : "text-muted-foreground group-hover:text-foreground",
+                      )}
+                      aria-hidden="true"
+                      strokeWidth={childIsActive ? 2 : 1.75}
+                    />
+                    <span className="truncate">{child.label}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </div>
+        </ul>
+      )}
     </li>
   );
 }
@@ -242,6 +369,8 @@ export default function Sidebar({ user }) {
           {navItems.map((item, i) =>
             item.type === "section" ? (
               <SectionLabel key={`section-${i}`} label={item.label} />
+            ) : item.type === "group" ? (
+              <NavGroup key={item.href} item={item} pathname={pathname} />
             ) : (
               <NavItem key={item.href} item={item} pathname={pathname} />
             ),

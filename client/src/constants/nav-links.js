@@ -81,16 +81,17 @@ export const RECRUITER_NAV = [
     icon: LayoutDashboard,
   },
   {
-    type: "link",
+    type: "group",
     label: "My Jobs",
     href: "/dashboard/recruiter/jobs",
     icon: List,
-  },
-  {
-    type: "link",
-    label: "Post a Job",
-    href: "/dashboard/recruiter/jobs/new",
-    icon: PlusSquare,
+    children: [
+      {
+        label: "Post a Job",
+        href: "/dashboard/recruiter/jobs/new",
+        icon: PlusSquare,
+      },
+    ],
   },
   {
     type: "link",
