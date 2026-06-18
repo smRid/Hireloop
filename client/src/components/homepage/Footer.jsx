@@ -67,7 +67,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full border-t border-border bg-card px-4 pt-16 pb-8 sm:px-6 lg:px-8">
+    <footer className="w-full border-t border-border/80 bg-card/90 px-4 pt-16 pb-8 shadow-[0_-1px_0_color-mix(in_oklch,var(--foreground)_4%,transparent)] sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         {/* ── Top section: 4-column grid ── */}
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
@@ -80,7 +80,7 @@ export default function Footer() {
               aria-label="Hireloop home"
             >
               <BrandMark />
-              <span className="font-heading text-[20px] font-bold leading-none text-foreground tracking-tight">
+              <span className="font-heading text-[20px] font-bold leading-none text-foreground">
                 Hireloop
               </span>
             </Link>
@@ -101,7 +101,7 @@ export default function Footer() {
                   aria-label={label}
                   className={cn(
                     "flex size-9 items-center justify-center rounded-md",
-                    "border border-border bg-secondary",
+                    "border border-border/80 bg-secondary/80",
                     "text-muted-foreground transition-all duration-200",
                     "hover:border-primary hover:text-primary",
                   )}
@@ -156,7 +156,7 @@ export default function Footer() {
         </div>
 
         {/* ── Divider ── */}
-        <div className="my-12 h-px w-full bg-border" aria-hidden="true" />
+        <div className="my-12 h-px w-full bg-border/80" aria-hidden="true" />
 
         {/* ── Bottom row: copyright + legal links ── */}
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">

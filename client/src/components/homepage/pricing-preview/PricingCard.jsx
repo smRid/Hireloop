@@ -20,16 +20,16 @@ const PricingCard = ({ plan }) => {
   return (
     <article
       className={cn(
-        "relative flex flex-col rounded-xl border p-6 transition-all duration-200",
+        "relative flex flex-col rounded-xl border p-6 shadow-sm shadow-black/10 transition-all duration-200",
         featured
           ? [
-              "border-primary bg-card",
-              "shadow-[0_0_0_1px_var(--primary),0_16px_48px_-8px_color-mix(in_oklch,var(--primary)_22%,transparent)]",
+              "border-primary/80 bg-card",
+              "shadow-[0_0_0_1px_color-mix(in_oklch,var(--primary)_75%,transparent),0_18px_52px_-20px_color-mix(in_oklch,var(--primary)_55%,black)]",
             ]
           : [
-              "border-border bg-popover",
+              "border-border/80 bg-popover/80",
               "hover:border-primary/50",
-              "hover:shadow-[0_8px_32px_-4px_color-mix(in_oklch,var(--primary)_10%,transparent)]",
+              "hover:shadow-[0_14px_40px_-20px_color-mix(in_oklch,var(--primary)_45%,black)]",
             ],
       )}
       aria-label={`${name} plan`}
@@ -59,7 +59,7 @@ const PricingCard = ({ plan }) => {
       </div>
 
       {/* ── Price ── */}
-      <div className="mb-6 flex items-end gap-1.5 border-b border-border pb-6">
+      <div className="mb-6 flex items-end gap-1.5 border-b border-border/80 pb-6">
         <span className="font-heading text-[44px] font-bold leading-none text-foreground">
           {price}
         </span>

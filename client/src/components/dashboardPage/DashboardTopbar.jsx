@@ -76,7 +76,7 @@ export default function DashboardTopbar({
         "flex h-16 items-center justify-between gap-4",
         /* Offset by sidebar width */
         "left-60",
-        "border-b border-border bg-card",
+        "border-b border-border/80 bg-card/90 shadow-[0_1px_0_color-mix(in_oklch,var(--foreground)_4%,transparent)] backdrop-blur-xl",
         "px-6",
       )}
       aria-label="Dashboard topbar"
@@ -93,7 +93,7 @@ export default function DashboardTopbar({
           className={cn(
             "relative hidden sm:flex items-center",
             "h-9 w-70",
-            "rounded-lg border border-border bg-popover",
+            "rounded-lg border border-border/90 bg-popover/80",
             "transition-all duration-200",
             "focus-within:border-primary focus-within:ring-2 focus-within:ring-ring/25",
           )}

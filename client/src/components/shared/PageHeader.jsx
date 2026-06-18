@@ -4,12 +4,12 @@ export default function PageHeader({ title, description, actions, className }) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between",
+        "flex flex-col gap-4 border-b border-border/70 pb-5 sm:flex-row sm:items-start sm:justify-between",
         className,
       )}
     >
       <div className="flex min-w-0 flex-col gap-1.5">
-        <h1 className="font-heading text-[28px] font-bold leading-tight text-foreground">
+        <h1 className="font-heading text-[28px] font-semibold leading-tight text-foreground">
           {title}
         </h1>
         {description && (

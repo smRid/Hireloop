@@ -29,8 +29,8 @@ export default function Navbar() {
       <header
         className={cn(
           "sticky top-0 z-50 w-full h-16",
-          "bg-card border-b border-border",
-          "backdrop-blur-md",
+          "border-b border-border/80 bg-card/90 shadow-[0_1px_0_color-mix(in_oklch,var(--foreground)_4%,transparent)]",
+          "backdrop-blur-xl",
         )}
       >
         <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -41,7 +41,7 @@ export default function Navbar() {
             aria-label="Hireloop home"
           >
             <BrandMark />
-            <span className="font-heading text-[22px] font-bold leading-none text-foreground tracking-tight">
+            <span className="font-heading text-[22px] font-bold leading-none text-foreground">
               Hireloop
             </span>
           </Link>
@@ -91,7 +91,7 @@ export default function Navbar() {
         role="navigation"
         aria-label="Mobile navigation"
         className={cn(
-          "sticky top-16 z-40 w-full overflow-hidden border-b border-border bg-card backdrop-blur-md md:hidden",
+          "sticky top-16 z-40 w-full overflow-hidden border-b border-border/80 bg-card/95 shadow-lg shadow-black/10 backdrop-blur-xl md:hidden",
           "transition-all duration-300 ease-in-out",
           mobileOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0",
         )}

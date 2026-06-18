@@ -47,10 +47,10 @@ const GoogleAuth = () => {
       type="button"
       className={cn(
         "mb-5 flex h-11 w-full items-center justify-center gap-3 rounded-xl",
-        "border border-border bg-popover",
+        "border border-border/80 bg-popover/80 shadow-sm shadow-black/10",
         "font-sans text-[14px] font-medium text-foreground",
         "transition-all duration-150",
-        "hover:border-primary",
+        "hover:border-primary/60 hover:bg-card",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
       )}
     >

@@ -6,7 +6,7 @@ import Link from "next/link";
 const CompanyLogo = ({ initials }) => {
   return (
     <div
-      className="flex size-9 shrink-0 items-center justify-center rounded-md bg-popover border border-border"
+      className="flex size-9 shrink-0 items-center justify-center rounded-md border border-border/80 bg-popover/80 shadow-sm shadow-black/10"
       aria-hidden="true"
     >
       <span className="font-heading text-[13px] font-semibold text-primary leading-none">
@@ -21,8 +21,8 @@ const SalaryBadge = ({ salary }) => {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-md px-2.5 py-1",
-        "bg-primary/10 text-primary",
+        "inline-flex items-center rounded-md border border-primary/15 px-2.5 py-1",
+        "bg-primary/8 text-primary",
         "font-sans text-[12px] font-medium",
       )}
     >
@@ -35,7 +35,7 @@ const TypeBadge = ({ type }) => {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-md px-2.5 py-1",
+        "inline-flex items-center rounded-md border border-chart-2/15 px-2.5 py-1",
         "bg-chart-2/10 text-chart-2",
         "font-sans text-[12px] font-medium",
       )}
@@ -49,10 +49,10 @@ const JobCard = ({ job }) => {
   return (
     <article
       className={cn(
-        "group flex flex-col gap-4 rounded-xl border border-border bg-card p-5",
+        "group flex flex-col gap-4 rounded-xl border border-border/80 bg-card/95 p-5 shadow-sm shadow-black/10",
         "transition-all duration-250 ease-out",
-        "hover:-translate-y-1 hover:border-primary",
-        "hover:shadow-[0_8px_32px_-4px_color-mix(in_oklch,var(--primary)_18%,transparent)]",
+        "hover:-translate-y-1 hover:border-primary/60",
+        "hover:shadow-[0_16px_44px_-18px_color-mix(in_oklch,var(--primary)_45%,black)]",
       )}
     >
       {/* ── Top row: logo + company + location ── */}

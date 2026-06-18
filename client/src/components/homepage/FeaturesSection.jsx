@@ -66,7 +66,7 @@ function GradientTopBorder() {
 export default function FeaturesSection() {
   return (
     <section
-      className="relative w-full bg-card px-4 py-20 sm:px-6 lg:px-8"
+      className="relative w-full border-y border-border/60 bg-card/80 px-4 py-20 sm:px-6 lg:px-8"
       aria-labelledby="features-heading"
     >
       {/* Horizontal teal gradient border at the top edge */}
@@ -94,7 +94,7 @@ export default function FeaturesSection() {
         </div>
 
         {/* ── 6-item grid ── */}
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map(({ icon, label, description }) => (
             <FeatureItem
               key={label}

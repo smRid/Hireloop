@@ -19,9 +19,9 @@ export default function StatsRow() {
             key={label}
             className={cn(
               "group flex flex-col items-center justify-center gap-1 rounded-xl",
-              "border border-border bg-card px-6 py-6",
+              "border border-border/80 bg-card/85 px-6 py-6 shadow-sm shadow-black/10",
               "transition-all duration-200",
-              "hover:border-primary hover:shadow-[0_0_20px_0px_color-mix(in_oklch,var(--primary)_12%,transparent)]",
+              "hover:border-primary/50 hover:shadow-[0_12px_34px_-22px_color-mix(in_oklch,var(--primary)_55%,black)]",
             )}
           >
             <span className="font-heading text-[48px] font-bold leading-none text-primary">

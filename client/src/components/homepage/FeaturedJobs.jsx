@@ -109,9 +109,9 @@ const FeaturedJobs = () => {
           <Link
             href="/jobs"
             className={cn(
-              "inline-flex items-center gap-2 rounded-md border border-border bg-card",
+              "inline-flex items-center gap-2 rounded-md border border-border/80 bg-card/80 shadow-sm shadow-black/10",
               "px-6 py-2.5 font-sans text-[14px] font-medium text-muted-foreground",
-              "transition-all duration-200 hover:border-primary hover:text-primary",
+              "transition-all duration-200 hover:border-primary/60 hover:text-primary",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
             )}
           >

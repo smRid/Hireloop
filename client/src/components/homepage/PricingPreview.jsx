@@ -76,7 +76,7 @@ const SEEKER_PLANS = [
 const PricingPreview = () => {
   return (
     <section
-      className="relative w-full bg-popover px-4 py-20 sm:px-6 lg:px-8"
+      className="relative w-full bg-popover/70 px-4 py-20 sm:px-6 lg:px-8"
       aria-labelledby="pricing-preview-heading"
     >
       {/* Gradient top border — mirrors FeaturesSection pattern */}
@@ -131,7 +131,7 @@ const PricingPreview = () => {
           <Link
             href="/pricing"
             className={cn(
-              "inline-flex items-center gap-2 rounded-md border border-border bg-transparent",
+              "inline-flex items-center gap-2 rounded-md border border-border/80 bg-card/50 shadow-sm shadow-black/10",
               "px-6 py-2.5 font-sans text-[14px] font-medium text-muted-foreground",
               "transition-all duration-200 hover:border-primary hover:text-primary",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",

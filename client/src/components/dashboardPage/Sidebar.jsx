@@ -90,13 +90,13 @@ function NavItem({ item, pathname }) {
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
           isActive
             ? [
-                "bg-popover text-primary font-medium",
+                "bg-primary/10 text-primary font-medium",
                 /* Left border accent — inset via box-shadow so it doesn't affect layout */
                 "shadow-[inset_2px_0_0_0_var(--primary)]",
               ]
             : [
                 "text-muted-foreground",
-                "hover:bg-popover hover:text-foreground",
+                "hover:bg-sidebar-accent hover:text-foreground",
               ],
         )}
       >
@@ -146,12 +146,12 @@ function NavGroup({ item, pathname }) {
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
             triggerActive
               ? [
-                  "bg-popover text-primary font-medium",
+                  "bg-primary/10 text-primary font-medium",
                   "shadow-[inset_2px_0_0_0_var(--primary)]",
                 ]
               : [
                   "text-muted-foreground",
-                  "hover:bg-popover hover:text-foreground",
+                  "hover:bg-sidebar-accent hover:text-foreground",
                 ],
           )}
         >
@@ -179,8 +179,8 @@ function NavGroup({ item, pathname }) {
             "transition-colors duration-150",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
             triggerActive
-              ? "text-primary hover:bg-popover"
-              : "text-muted-foreground hover:bg-popover hover:text-foreground",
+              ? "text-primary hover:bg-sidebar-accent"
+              : "text-muted-foreground hover:bg-sidebar-accent hover:text-foreground",
           )}
         >
           <ChevronRight
@@ -216,8 +216,8 @@ function NavGroup({ item, pathname }) {
                       "font-sans text-[13px] transition-all duration-150",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                       childIsActive
-                        ? "bg-popover text-primary font-medium"
-                        : "text-muted-foreground hover:bg-popover hover:text-foreground",
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "text-muted-foreground hover:bg-sidebar-accent hover:text-foreground",
                     )}
                   >
                     <ChildIcon
@@ -256,14 +256,14 @@ export default function Sidebar({ user }) {
         /* Fixed, full-height left column */
         "fixed inset-y-0 left-0 z-30",
         "flex w-60 flex-col",
-        "bg-card border-r border-border",
+        "border-r border-border/80 bg-sidebar/95 shadow-2xl shadow-black/15 backdrop-blur-xl",
       )}
       aria-label="Dashboard navigation"
     >
       {/* ════════════════════════════════════════════════════════════
           TOP — logo
           ════════════════════════════════════════════════════════════ */}
-      <div className="flex h-16 shrink-0 items-center border-b border-border px-5">
+      <div className="flex h-16 shrink-0 items-center border-b border-border/80 px-5">
         <Link
           href="/"
           className={cn(
@@ -309,7 +309,7 @@ export default function Sidebar({ user }) {
               clipPath="url(#sidebar-brand-bottom)"
             />
           </svg>
-          <span className="font-heading text-[18px] font-bold leading-none tracking-tight text-foreground">
+          <span className="font-heading text-[18px] font-bold leading-none text-foreground">
             Hireloop
           </span>
         </Link>
@@ -318,7 +318,7 @@ export default function Sidebar({ user }) {
       {/* ════════════════════════════════════════════════════════════
           USER INFO BLOCK
           ════════════════════════════════════════════════════════════ */}
-      <div className="shrink-0 border-b border-border px-4 py-4">
+      <div className="shrink-0 border-b border-border/80 px-4 py-4">
         <div className="flex items-center gap-3">
           <Avatar name={u.name} size="md" />
           <div className="min-w-0 flex-1 flex flex-col gap-0.5">
@@ -381,7 +381,7 @@ export default function Sidebar({ user }) {
       {/* ════════════════════════════════════════════════════════════
           BOTTOM — user + log out
           ════════════════════════════════════════════════════════════ */}
-      <div className="shrink-0 border-t border-border p-3">
+      <div className="shrink-0 border-t border-border/80 p-3">
         <div className="flex items-center gap-3 rounded-lg px-2 py-2">
           <Avatar name={u.name} size="sm" />
           <div className="min-w-0 flex-1">
