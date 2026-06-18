@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { Search, Briefcase, Check, ArrowRight, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { setRole } from "@/lib/api-client";
+import { useSession } from "@/lib/auth-client";
 
 /* ════════════════════════════════════════════════════════════════════
    MOCK — replace with real session from auth provider
@@ -126,16 +128,18 @@ function RoleCard({ role, selected, onSelect }) {
    ════════════════════════════════════════════════════════════════════ */
 
 export default function OnboardingPage() {
+  const { data: session } = useSession();
+  const user = session?.user;
   const router = useRouter();
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const selectedRole = ROLES.find((r) => r.id === selected);
 
-  function handleContinue() {
+  async function handleContinue() {
     if (!selectedRole || loading) return;
     setLoading(true);
-    /* TODO: persist role to user record via API, then redirect */
+    await setRole({ role: selected, userId: user.id });
     setTimeout(() => {
       router.push(selectedRole.href);
     }, 800);
