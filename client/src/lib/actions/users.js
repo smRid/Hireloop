@@ -23,3 +23,13 @@ export async function updateUserRole(userId, role) {
 
   return { data };
 }
+
+export async function updateUserAccountRole(userId, role) {
+  revalidatePath("/dashboard/admin/users");
+  return serverMutation(`/users/${userId}/role`, { role }, "PATCH");
+}
+
+export async function updateUserStatus(userId, status) {
+  revalidatePath("/dashboard/admin/users");
+  return serverMutation(`/users/${userId}/status`, { status }, "PATCH");
+}

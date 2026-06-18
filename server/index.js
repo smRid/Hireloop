@@ -34,6 +34,18 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    savedJobs: [
+      {
+        jobId: {
+          type: String,
+          required: true,
+        },
+        savedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   { timestamps: true, strict: false },
 );
@@ -517,6 +529,35 @@ const withApplicantCounts = async (jobs) => {
   }));
 };
 
+const getSavedJobsForUser = async (user) => {
+  const savedJobs = Array.isArray(user?.savedJobs) ? user.savedJobs : [];
+  const jobIds = savedJobs
+    .map((item) => item.jobId)
+    .filter((jobId) => mongoose.Types.ObjectId.isValid(jobId));
+
+  if (jobIds.length === 0) {
+    return [];
+  }
+
+  const jobs = await Job.find({
+    _id: { $in: jobIds },
+    status: { $ne: "removed" },
+  }).lean();
+  const jobMap = new Map(jobs.map((job) => [job._id.toString(), job]));
+
+  return savedJobs
+    .map((item) => {
+      const job = jobMap.get(item.jobId);
+      if (!job) return null;
+
+      return {
+        ...job,
+        savedAt: item.savedAt,
+      };
+    })
+    .filter(Boolean);
+};
+
 app.get("/", (req, res) => {
   res.send("Server is cooking!");
 });
@@ -566,6 +607,66 @@ app.patch("/api/users/set-role", verifyToken, async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
+
+app.patch(
+  "/api/users/:id/role",
+  verifyToken,
+  verifyRole("admin"),
+  async (req, res) => {
+    try {
+      const { role } = req.body;
+
+      if (!["seeker", "recruiter", "admin"].includes(role)) {
+        return res.status(400).json({ message: "Invalid role" });
+      }
+
+      const updatedUser = await User.findOneAndUpdate(
+        userIdentityQuery(req.params.id),
+        { role },
+        { new: true },
+      );
+
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      console.error("[users:update-role]", error);
+      res.status(500).json({ message: "Server error", error: error.message });
+    }
+  },
+);
+
+app.patch(
+  "/api/users/:id/status",
+  verifyToken,
+  verifyRole("admin"),
+  async (req, res) => {
+    try {
+      const { status } = req.body;
+
+      if (!["active", "suspended"].includes(status)) {
+        return res.status(400).json({ message: "Invalid status" });
+      }
+
+      const updatedUser = await User.findOneAndUpdate(
+        userIdentityQuery(req.params.id),
+        { status },
+        { new: true },
+      );
+
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      console.error("[users:update-status]", error);
+      res.status(500).json({ message: "Server error", error: error.message });
+    }
+  },
+);
 
 app.get("/api/companies", async (req, res) => {
   try {
@@ -985,6 +1086,74 @@ app.patch(
       res.status(200).json(application);
     } catch (error) {
       console.error("[applications:update-status]", error);
+      res.status(500).json({ message: "Server error", error: error.message });
+    }
+  },
+);
+
+app.get(
+  "/api/saved-jobs",
+  verifyToken,
+  verifyRole("seeker"),
+  async (req, res) => {
+    try {
+      const user = await User.findById(req.user._id).lean();
+      const savedJobs = await getSavedJobsForUser(user);
+
+      res.status(200).json(savedJobs);
+    } catch (error) {
+      console.error("[saved-jobs:get]", error);
+      res.status(500).json({ message: "Server error", error: error.message });
+    }
+  },
+);
+
+app.post(
+  "/api/saved-jobs/:jobId",
+  verifyToken,
+  verifyRole("seeker"),
+  async (req, res) => {
+    try {
+      const job = await Job.findById(req.params.jobId).lean();
+
+      if (!job || job.status !== "active") {
+        return res.status(404).json({ message: "Job not found" });
+      }
+
+      const user = await User.findById(req.user._id);
+      const savedJobs = Array.isArray(user.savedJobs) ? user.savedJobs : [];
+      const existing = savedJobs.find((item) => item.jobId === req.params.jobId);
+
+      if (!existing) {
+        savedJobs.push({ jobId: req.params.jobId, savedAt: new Date() });
+        user.savedJobs = savedJobs;
+        await user.save();
+      }
+
+      const savedJob = await getSavedJobsForUser(user.toObject());
+      const saved = savedJob.find((item) => item._id.toString() === req.params.jobId);
+
+      res.status(200).json(saved ?? { ...job, savedAt: new Date() });
+    } catch (error) {
+      console.error("[saved-jobs:add]", error);
+      res.status(500).json({ message: "Server error", error: error.message });
+    }
+  },
+);
+
+app.delete(
+  "/api/saved-jobs/:jobId",
+  verifyToken,
+  verifyRole("seeker"),
+  async (req, res) => {
+    try {
+      await User.findByIdAndUpdate(req.user._id, {
+        $pull: { savedJobs: { jobId: req.params.jobId } },
+      });
+
+      res.status(200).json({ message: "Saved job removed" });
+    } catch (error) {
+      console.error("[saved-jobs:delete]", error);
       res.status(500).json({ message: "Server error", error: error.message });
     }
   },

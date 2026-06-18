@@ -21,3 +21,14 @@ export async function updateCompany(companyId, payload) {
   revalidatePath("/companies");
   return result;
 }
+
+export async function updateCompanyStatus(companyId, status) {
+  const result = await serverMutation(
+    `/companies/${companyId}/status`,
+    { status },
+    "PATCH",
+  );
+  revalidatePath("/dashboard/admin/companies");
+  revalidatePath("/companies");
+  return result;
+}
