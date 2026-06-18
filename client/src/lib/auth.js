@@ -3,11 +3,18 @@ import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { admin } from "better-auth/plugins";
 
-if (!process.env.MONGO_DB_URI) {
-  throw new Error("Missing environment variable: MONGO_DB_URI");
-}
+const mongoUri = process.env.MONGO_DB_URI ?? "mongodb://127.0.0.1:27017/hireloop";
+const googleCredentials =
+  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+    ? {
+        google: {
+          clientId: process.env.GOOGLE_CLIENT_ID,
+          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        },
+      }
+    : undefined;
 
-const client = new MongoClient(process.env.MONGO_DB_URI);
+const client = new MongoClient(mongoUri);
 const db = client.db("hireloop");
 
 export const auth = betterAuth({
@@ -40,11 +47,6 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  socialProviders: {
-    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    },
-  },
+  socialProviders: googleCredentials,
   plugins: [admin()],
 });
