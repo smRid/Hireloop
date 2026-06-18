@@ -12,6 +12,7 @@
     "better-auth": "^1.6.14",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "kysely": "^0.28.17",
     "lucide-react": "^1.16.0",
     "mongodb": "^7.2.0",
     "next": "16.2.6",
