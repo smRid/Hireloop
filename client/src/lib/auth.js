@@ -1,29 +1,35 @@
 import { betterAuth } from "better-auth";
 import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
+import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins";
 
 const mongoUri = process.env.MONGO_DB_URI ?? "mongodb://127.0.0.1:27017/hireloop";
-const googleCredentials =
-  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
-    ? {
-        google: {
-          clientId: process.env.GOOGLE_CLIENT_ID,
-          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        },
-      }
-    : undefined;
+const globalForMongo = globalThis;
+const client = globalForMongo.__HireloopMongoClient ?? new MongoClient(mongoUri);
 
-const client = new MongoClient(mongoUri);
+if (process.env.NODE_ENV !== "production") {
+  globalForMongo.__HireloopMongoClient = client;
+}
+
 const db = client.db("hireloop");
+const authBaseUrl =
+  process.env.BETTER_AUTH_URL ??
+  process.env.NEXT_PUBLIC_AUTH_BASE_URL ??
+  "http://localhost:3000";
+const trustedOrigins = [
+  process.env.BETTER_AUTH_URL,
+  process.env.NEXT_PUBLIC_AUTH_BASE_URL,
+  "http://localhost:3000",
+].filter(Boolean);
 
 export const auth = betterAuth({
   database: mongodbAdapter(db, {
     client,
   }),
   secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.NEXT_PUBLIC_AUTH_BASE_URL,
-  trustedOrigins: [process.env.NEXT_PUBLIC_AUTH_BASE_URL].filter(Boolean),
+  baseURL: authBaseUrl,
+  trustedOrigins,
   user: {
     additionalFields: {
       role: {
@@ -46,7 +52,21 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
+    autoSignIn: false,
   },
-  socialProviders: googleCredentials,
-  plugins: [admin()],
+  account: {
+    updateAccountOnSignIn: true,
+    accountLinking: {
+      enabled: true,
+      trustedProviders: ["google", "email-password"],
+    },
+  },
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      overrideUserInfoOnSignIn: true,
+    },
+  },
+  plugins: [admin(), nextCookies()],
 });
