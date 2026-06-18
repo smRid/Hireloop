@@ -8,6 +8,13 @@ const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+app.use((req, res, next) => {
+  if (req.path !== "/" && !req.path.startsWith("/api")) {
+    req.url = `/api${req.url}`;
+  }
+
+  next();
+});
 
 const userSchema = new mongoose.Schema(
   {
