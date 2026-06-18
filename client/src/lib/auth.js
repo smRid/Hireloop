@@ -12,7 +12,8 @@ export const auth = betterAuth({
   user: {
     additionalFields: {
       role: {
-        defaultValue: "seeker",
+        enum: ["seeker", "recruiter", "admin"],
+        defaultValue: null,
       },
     },
   },
