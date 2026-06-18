@@ -10,7 +10,6 @@ import {
   BookmarkCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ALL_JOBS } from "@/lib/jobs-data";
 
 const LOCATIONS = [
   "All Locations",
@@ -422,13 +421,13 @@ function Pagination({ current, total, onChange }) {
 }
 
 /* ── Main listings panel ──────────────────────────────────────────── */
-export default function JobListings({ filters }) {
+export default function JobListings({ filters, jobs = [] }) {
   const [keyword, setKeyword] = useState("");
   const [location, setLocation] = useState("");
   const [page, setPage] = useState(1);
 
   /* Filter jobs against sidebar filters + search bar */
-  const filtered = ALL_JOBS.filter((job) => {
+  const filtered = jobs.filter((job) => {
     const kw = keyword.trim().toLowerCase();
     if (
       kw &&
