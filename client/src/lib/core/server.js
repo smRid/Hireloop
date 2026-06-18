@@ -1,3 +1,5 @@
+import { getCurrentSession } from "@/lib/core/session";
+
 const getApiBaseUrl = () => {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -20,12 +22,24 @@ const parseResponse = async (response) => {
   return response.json();
 };
 
+const authHeader = async () => {
+  try {
+    const session = await getCurrentSession();
+    const token = session?.session?.token ?? session?.token;
+
+    return token ? { authorization: `Bearer ${token}` } : {};
+  } catch {
+    return {};
+  }
+};
+
 export const apiRequest = async (path, options = {}) => {
   try {
     const response = await fetch(`${getApiBaseUrl()}${withLeadingSlash(path)}`, {
       ...options,
       headers: {
         "Content-Type": "application/json",
+        ...(await authHeader()),
         ...options.headers,
       },
     });

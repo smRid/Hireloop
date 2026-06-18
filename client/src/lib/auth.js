@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
+import { admin } from "better-auth/plugins";
 
 if (!process.env.MONGO_DB_URI) {
   throw new Error("Missing environment variable: MONGO_DB_URI");
@@ -13,6 +14,9 @@ export const auth = betterAuth({
   database: mongodbAdapter(db, {
     client,
   }),
+  secret: process.env.BETTER_AUTH_SECRET,
+  baseURL: process.env.NEXT_PUBLIC_AUTH_BASE_URL,
+  trustedOrigins: [process.env.NEXT_PUBLIC_AUTH_BASE_URL].filter(Boolean),
   user: {
     additionalFields: {
       role: {
@@ -42,4 +46,5 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     },
   },
+  plugins: [admin()],
 });

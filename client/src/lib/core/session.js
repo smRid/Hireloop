@@ -18,7 +18,11 @@ export const requireUser = async () => {
   const user = await getCurrentUser();
 
   if (!user) {
-    redirect("/unauthorized");
+    redirect("/sign-in");
+  }
+
+  if (user.status === "suspended") {
+    redirect("/forbidden");
   }
 
   return user;
@@ -27,6 +31,10 @@ export const requireUser = async () => {
 export const requireRole = async (roles) => {
   const user = await requireUser();
   const allowedRoles = Array.isArray(roles) ? roles : [roles];
+
+  if (!user.role) {
+    redirect("/onboarding");
+  }
 
   if (!allowedRoles.includes(user.role)) {
     redirect("/forbidden");
